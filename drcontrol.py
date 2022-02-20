@@ -73,15 +73,11 @@ class cmdarg_data:
 class relay_data(dict):
 
     address = {
-            "1":"2",
-            "2":"8",
-            "3":"20",
-            "4":"80",
-            "5":"1",
-            "6":"4",
-            "7":"10",
-            "8":"40",
-            "all":"FF"
+            "1":"1",
+            "2":"2",
+            "3":"4",
+            "4":"8",
+            "all":"F"
             }
 
     def __getitem__(self, key): return self[key]
@@ -121,13 +117,12 @@ def get_relay_state( data, relay ):
 # ----------------------------------------------------------------------------
 
 def list_devices():
-    print("Vendor\t\tProduct\t\t\tSerial")
-    dev_list = []
+    result = []
     for device in Driver().list_devices():
-        device = map(lambda x: x.decode('latin1'), device)
+        device = map(lambda x: x.decode('latin1') if not isinstance(x, str) else x, device)
         vendor, product, serial = device
-        #print "%s\t\t%s\t\t%s" % (vendor, product, serial)
-        print(vendor, "\t" , product, "\t", serial)
+        result.append((vendor, product, serial))
+    return result
 
 # ----------------------------------------------------------------------------
 # SET_RELAY()
@@ -135,7 +130,7 @@ def list_devices():
 # Set specified relay to chosen state
 # ----------------------------------------------------------------------------
 
-def set_relay():
+def set_relay(cmdarg, relay):
 
     if cmdarg.verbose:
         print("Device:\t\t", cmdarg.device)
